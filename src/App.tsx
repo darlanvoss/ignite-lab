@@ -16,8 +16,6 @@ interface Lesson {
 function App() {
   const { data } = useQuery<{ lessons: Lesson[] }>(GET_LESSONS_QUERY)
 
-  console.log('data :>> ', data);
-
   return (
     <ul>
       {data?.lessons.map(lesson => {
