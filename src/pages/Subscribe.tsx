@@ -1,20 +1,25 @@
 import { gql, useMutation } from "@apollo/client";
-import { useState, FormEvent } from "react";
+import React, { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { Logo } from "../components/Logo";
 import { useCreateSubscriberMutation } from "../graphql/generated";
-
+import validator from 'validator';
 
 export function Subscribe() {
   const navigate = useNavigate();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
 
   const [ createSubscriber, { loading } ] = useCreateSubscriberMutation()
 
   async function handleSubscribe(event: FormEvent) {
     event.preventDefault();
+
+    if (!validator.isEmail(email)) {
+      return setEmailError('Informe um e-mail válido!'); 
+    } 
 
     await createSubscriber({
       variables: {
@@ -57,8 +62,15 @@ export function Subscribe() {
               className="bg-gray-900 rounded px-5 h-14"
               type="text" 
               placeholder="Digite seu e-mail"
-              onChange={event => setEmail(event.target.value)}
+              onChange={event => { 
+                setEmail(event.target.value)
+                setEmailError('');
+              }}
             />
+
+            <span className="font-weight-bold text-red-500">
+              { emailError }
+            </span>
 
             <button
               type="submit"
